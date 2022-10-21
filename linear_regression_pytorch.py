@@ -89,7 +89,7 @@ def training_loop(n_epochs, learning_rate, params, x_hat, y_hat, print_params=Tr
         loss = loss_fn(y, y_hat)
         losses.append(loss)
 
-        if epoch in {1, 2, 3, 10, 11, 99, 100, 1000, 4000, 5000}:
+        if epoch in {1, 2, 3, 10, 11, 99, 100, 1000, 4000, 5000, 10000, 50000, 70000}:
             print('Epoch %d, Loss %f' % (epoch, float(loss)))
             if print_params:
                 print('    Params:', params)
@@ -108,10 +108,13 @@ def main():
 
 
 
-    x_hat = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2,2.1,2.2,2.3,2.4,2.5]
-    y_hat = [0.27,0.3,0.38,0.36,0.39,0.42,0.45,0.40,0.45,0.54,0.57,0.6,0.60,0.66,0.69,0.72,0.75,0.78,0.81,0.84,0.87,0.9,0.93,0.96,0.99]
+    #x_hat = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2,2.1,2.2,2.3,2.4,2.5]
+    #y_hat = [0.27,0.3,0.38,0.36,0.39,0.42,0.45,0.40,0.45,0.54,0.57,0.6,0.60,0.66,0.69,0.72,0.75,0.78,0.81,0.84,0.87,0.9,0.93,0.96,0.99]
 
-
+    x_hat = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
+        14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
+    y_hat = [4.5, 6.5, 8.5, 10.5, 12.5, 14.5, 16.5, 18.5, 20.5, 22.5, 24.5, 26.5,
+        28.5, 30.5, 32.5, 34.5, 36.5, 38.5, 40.5, 42.5, 44.5, 46.5, 48.5, 50.5, 52.5]
 
 
     x_hat = torch.tensor(x_hat)
@@ -119,8 +122,8 @@ def main():
 
 
     params = training_loop(
-        n_epochs=1000,
-        learning_rate=1e-2,
+        n_epochs=70000,
+        learning_rate=1e-4,
         params=torch.rand(2),
         x_hat=x_hat,
         y_hat=y_hat)
@@ -140,7 +143,7 @@ def main():
     plt.ylabel("Computed Loss")
     plt.plot(losses)
 
-    test_val = torch.tensor([2.8])
+    test_val = torch.tensor([26])
 
 
     # prediction = model(test_val,params[0],params[1])
