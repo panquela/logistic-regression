@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Sep 26 12:47:22 2022
+@author: Roberto Vazquez Lucerca
+@maintainer: PedroAnquela
+"""
+
 import time
 import torch
 import matplotlib.pyplot as plt
@@ -21,25 +28,25 @@ def normalize(x,y):
 # We will build nn to replace this model
 def model(x, w, b):
     """The model to predict temperature"""
-    y = w * x + b
-    return y
+    y_hat = w * x + b
+    return y_hat
 
 
 # Pytorch comes with a number of predifined loss functions you can just import
 # For example: https://pytorch.org/docs/stable/generated/torch.nn.MSELoss.html
 # But MSE is basically what you see below
 
-def loss_fn(y, y_hat):
+def loss_fn(y_hat, y):
     """The loss function used. Less loss is what we want"""
-    squared_diffs = (y - y_hat) ** 2
+    squared_diffs = (y_hat - y) ** 2
     mse = squared_diffs.mean()
     return mse
 
 # Before learning about backprop, we are going to do things manually. Concretely
 # we are going to calculate the partial derivatives analytically
 
-def dloss_fn(y, y_hat):
-    dLoss_y = 2 * (y - y_hat)
+def dloss_fn(y_hat, y):
+    dLoss_y = 2 * (y_hat - y)
     return dLoss_y
 
 
@@ -55,11 +62,11 @@ def dmodel_db(x, w, b):
 # analytically. We will never do this again. We will use backprop algorithm, using pytorch.
 
 
-def grad_fn(x_hat, y_hat, my_model, w, b):
-    dloss_dtp = dloss_fn(my_model, y_hat)
-    dloss_dw = dloss_dtp * dmodel_dw(x_hat, w, b)
-    dloss_db = dloss_dtp * dmodel_db(x_hat, w, b)
-    return torch.stack([dloss_dw.sum()/ my_model.size(0), dloss_db.sum()/ my_model.size(0)])
+def grad_fn(x, y, y_hat, w, b):
+    dloss_dtp = dloss_fn(y_hat, y)
+    dloss_dw = dloss_dtp * dmodel_dw(x, w, b)
+    dloss_db = dloss_dtp * dmodel_db(x, w, b)
+    return torch.stack([dloss_dw.sum()/ y_hat.size(0), dloss_db.sum()/ y_hat.size(0)])
 
 
 # Now the training loop, which contains the main steps. Once we learn to do this in pytorch
@@ -70,7 +77,7 @@ def grad_fn(x_hat, y_hat, my_model, w, b):
 # 4. Use built in optimizers (gradient descent but also others).
 
 losses=[]
-def training_loop(n_epochs, learning_rate, params, x_hat, y_hat, print_params=True):
+def training_loop(n_epochs, learning_rate, params, x, y, print_params=True):
 
     for epoch in range(1, n_epochs + 1):
 
@@ -78,15 +85,15 @@ def training_loop(n_epochs, learning_rate, params, x_hat, y_hat, print_params=Tr
         w, b = params
 
         # Setting the model we will use (a simple linear equation)
-        y = model(x_hat, w, b)
+        y_hat = model(x, w, b)
 
         # Setting our gradient vector
-        gradient_vector = grad_fn(x_hat, y_hat, y, w, b)
+        gradient_vector = grad_fn(x, y, y_hat, w, b)
 
         # Setting our Gradient Descent step
         params = params - learning_rate * gradient_vector
 
-        loss = loss_fn(y, y_hat)
+        loss = loss_fn(y_hat, y)
         losses.append(loss)
 
         if epoch in {1, 2, 3, 10, 11, 99, 100, 1000, 4000, 5000, 10000, 50000, 70000}:
@@ -108,34 +115,34 @@ def main():
 
 
 
-    #x_hat = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2,2.1,2.2,2.3,2.4,2.5]
-    #y_hat = [0.27,0.3,0.38,0.36,0.39,0.42,0.45,0.40,0.45,0.54,0.57,0.6,0.60,0.66,0.69,0.72,0.75,0.78,0.81,0.84,0.87,0.9,0.93,0.96,0.99]
+    #x = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2,2.1,2.2,2.3,2.4,2.5]
+    #y = [0.27,0.3,0.38,0.36,0.39,0.42,0.45,0.40,0.45,0.54,0.57,0.6,0.60,0.66,0.69,0.72,0.75,0.78,0.81,0.84,0.87,0.9,0.93,0.96,0.99]
 
-    x_hat = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
+    x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
         14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
-    y_hat = [4.5, 6.5, 8.5, 10.5, 12.5, 14.5, 16.5, 18.5, 20.5, 22.5, 24.5, 26.5,
+    y = [4.5, 6.5, 8.5, 10.5, 12.5, 14.5, 16.5, 18.5, 20.5, 22.5, 24.5, 26.5,
         28.5, 30.5, 32.5, 34.5, 36.5, 38.5, 40.5, 42.5, 44.5, 46.5, 48.5, 50.5, 52.5]
 
 
-    x_hat = torch.tensor(x_hat)
-    y_hat = torch.tensor(y_hat)
+    x = torch.tensor(x)
+    y = torch.tensor(y)
 
 
     params = training_loop(
         n_epochs=70000,
         learning_rate=1e-4,
         params=torch.rand(2),
-        x_hat=x_hat,
-        y_hat=y_hat)
+        x=x,
+        y=y)
 
 
-    my_model = model(x_hat, *params)
+    my_model = model(x, *params)
 
     fig = plt.figure(dpi=600)
     plt.xlabel("Inputs observed")
     plt.ylabel("Outputs observed")
-    plt.plot(x_hat.numpy(), my_model.detach().numpy())
-    plt.plot(x_hat.numpy(), y_hat.numpy(),'o')
+    plt.plot(x.numpy(), my_model.detach().numpy())
+    plt.plot(x.numpy(), y.numpy(),'o')
     plt.savefig("temp_unknown_plot.png", format="png")  # bookskip
 
     fig = plt.figure(dpi=600)
