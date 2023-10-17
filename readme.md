@@ -6,7 +6,7 @@ Welcome to the Linear Regression Model. This code snippet trains a Pytorch model
 
 Walking through the code, you'll be able to find the four main building blocks of every single Neural Network model:
 
- * Forward pass: in this step we plug in a batch of our training data and get the output. Then we compare the result of our model and the actual data using a loss function.
- * Backward pass: this step deals with the math necessary to make the optimization work.
- * Optimization: here we modify the weights and bias of our model in order to approach our results to the actual data and, therefore, minimize the loss
- * Repetition: we repeat the algorithm as many times as the number of epochs defines.
+ * <br>Forward pass</br>: in this step we plug in a batch of our training data and get the output. Then we compare the result of our model and the actual data using a loss function.
+ * <br>Backward pass</br>: this step deals with the math necessary to make the optimization work.
+ * <br>Optimization</br>: here we modify the weights and bias of our model in order to approach our results to the actual data and, therefore, minimize the loss
+ * <br>Repetition</br>: we repeat the algorithm as many times as the number of epochs defines.
