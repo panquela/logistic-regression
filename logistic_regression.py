@@ -10,6 +10,9 @@ import torch
 import matplotlib.pyplot as plt
 import numpy as np
 
+import os
+os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
+
 
 def normalize(x,y):
 
@@ -46,8 +49,8 @@ def loss_fn(y_hat, y):
 # we are going to calculate the partial derivatives analytically
 
 def dloss_fn(y_hat, y):
-    dLoss_y = 2 * (y_hat - y)
-    return dLoss_y
+    dLoss_y_hat = 2 * (y_hat - y)
+    return dLoss_y_hat
 
 
 def dmodel_dw(x, w, b):
@@ -129,7 +132,7 @@ def main():
 
 
     params = training_loop(
-        n_epochs=70000,
+        n_epochs=10000,
         learning_rate=1e-4,
         params=torch.rand(2),
         x=x,
